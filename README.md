@@ -8,6 +8,8 @@ The goal of this PoC is to
 4. sink topics into mssql
 5. provide platfrom for key based pull queries. Via REST exposed in ksqlDB.
 
+Project leverages newest version of confluent server. However, as broker side schema validation is supposed to be demostrated within this PoC, and it requires `confluent-server`image (`ver 7.1.1`), this setup does not make use of KRaft, hence zookeeper is stil deployed. 
+
 # Documentation
 ## Content
 - [./configs/.localhost env prooperties](./configs/.localhost) contain ADVERTISED_HOST. Used in as docker-compose `env-file`  
