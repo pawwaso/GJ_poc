@@ -8,7 +8,7 @@ The goal of this PoC is to
 4. sink topics into mssql
 5. provide platfrom for key based pull queries. Via REST exposed in ksqlDB.
 
-Project leverages newest version of confluent server. However, as broker side schema validation is supposed to be demostrated within this PoC, and it requires `confluent-server`image (`ver 7.1.1`), this setup does not make use of KRaft, hence zookeeper is stil deployed. 
+Project leverages newest version of confluent server. However, as broker side schema validation is supposed to be demostrated within this PoC, and it requires `confluent-server`image (`ver 7.1.1`), this setup does not make use of KRaft, hence zookeeper is stil deployed.
 
 # Documentation
 ## Content
@@ -20,5 +20,13 @@ Project leverages newest version of confluent server. However, as broker side sc
 
 
 # Run
+
+## Command
 start with `docker-compose  --env-file ./config/.k8s up -d` for e.g., minikube based docker (set ADVERTISED_HOST to `minikube ip`) or
-with `docker-compose  --env-file ./config/.localhost up -d` for native docker installation
+with `docker-compose  --env-file ./config/.localhost up -d` for native docker installation.
+
+After startup few conatiners shall be running. In case `schema-registry` and/or `control-center` did not start just run `docker-compose...` command again.
+
+## Init state
+
+If successful, few containers shall run including (`conenct`,`ksqldb`, `mssql`). `mssql` is MS SQL Server with `GJ_TEST` DB created.
