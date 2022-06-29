@@ -1,0 +1,33 @@
+{
+  "name": "SAP_ftp_accounts_schema",
+  "config": {
+    "connector.class": "com.github.jcustenborder.kafka.connect.spooldir.SpoolDirCsvSourceConnector",
+    "config.action.reload": "restart",
+    "errors.retry.timeout": "10000",
+    "errors.log.enable": "true",
+    "errors.log.include.messages": "true",
+    "topic": "account_state_topic_schema",
+    "cleanup.policy": "MOVE",
+    "input.path": "/var/input-dir",
+    "finished.path": "/var/output-dir",
+    "error.path": "/var/error-dir",
+    "input.file.pattern": "^.*\\.csv$",
+    "halt.on.error": "false",
+    "file.minimum.age.ms": "1000",
+    "timestamp.mode": "PROCESS_TIME",
+    "files.sort.attributes": "LastModifiedAsc",
+    "input.path.walk.recursively": "false",
+    "schema.generation.enabled": "true",
+    "schema.generation.key.fields": "partner_id",
+    "schema.generation.key.name": "de.gj.kafka.connect.model.Key",
+    "schema.generation.value.name": "de.gj.kafka.connect.model.Value",
+    "parser.timestamp.timezone": "CEST",
+    "parser.timestamp.date.formats": "dd.MM.yyyy, yyyy-MM-dd'T'HH:mm:ss, yyyy-MM-dd' 'HH:mm:ss",
+    "csv.separator.char": "59",
+    "csv.null.field.indicator": "EMPTY_SEPARATORS",
+    "csv.first.row.as.header": "true",
+    "csv.file.charset": "UTF-8",
+    "value.converter.schema.registry.url": "http://schema-registry:8081",
+    "key.converter.schema.registry.url": "http://schema-registry:8081"
+  }
+}

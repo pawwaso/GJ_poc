@@ -19,7 +19,7 @@ Project leverages newest version of confluent server. However, as broker side sc
 - [kafka-connect-input-dir](./kafka-connect-input-dir) is volume mapped to internal input folder
 
 
-# Run
+# Run instructions
 
 ## Command
 start with `docker-compose  --env-file ./config/.k8s up -d` for e.g., minikube based docker (set ADVERTISED_HOST to `minikube ip`) or
@@ -30,3 +30,15 @@ After startup few conatiners shall be running. In case `schema-registry` and/or 
 ## Init state
 
 If successful, few containers shall run including (`conenct`,`ksqldb`, `mssql`). `mssql` is MS SQL Server with `GJ_TEST` DB created.
+
+
+## Sequence
+
+1. cd <mainDir>
+2. docker-compose up -d
+3. curl -d @kafka-connect-connectors/connector_SAP_ftp_accounts_config.json -X  POST -H "Content-Type: application/json" -H "Accept: application/json" http://<ADVERTISED_HOST>:8083/connectors
+4. docker-compose exec ksqldb-cli bash
+5. ksql http://ksqldb-server:8088
+6. SET 'auto.offset.reset' = 'earliest';
+7. create stream account_states_stream_keyed(PARTNER_ID VARCHAR KEY, IBAN VARCHAR,GUELTIG_AB VARCHAR, KONTOSTAND VARCHAR) with(kafka_topic='account_state_topic_schema', value_format='avro');
+8. create stream account_state_stream as select partner_id, iban, parse_timestamp(gueltig_ab,'dd.MM.yyyy') as gueltig_ab, cast(kontostand as double) as kontostand from ACCOUNT_STATES_STREAM_KEYED emit changes;

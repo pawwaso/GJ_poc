@@ -76,6 +76,7 @@ services:
       CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
       CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       # CLASSPATH required due to CC-2422
       CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-7.1.1.jar
       CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
@@ -85,6 +86,8 @@ services:
     volumes:
       - ./kafka-connect:/etc/kafka-connect/plugins:rw
       - ./kafka-connect-input-dir:/var/input-dir:rw
+      - ./kafka-connect-output-dir:/var/output-dir:rw
+      - ./kafka-connect-error-dir:/var/error-dir:rw
 
   control-center:
     image: confluentinc/cp-enterprise-control-center:7.1.1
