@@ -22,7 +22,7 @@
     "schema.generation.key.name": "de.gj.kafka.connect.model.Key",
     "schema.generation.value.name": "de.gj.kafka.connect.model.Value",
     "parser.timestamp.timezone": "CEST",
-    "parser.timestamp.date.formats": "dd.MM.yyyy, yyyy-MM-dd'T'HH:mm:ss, yyyy-MM-dd' 'HH:mm:ss",
+    "parser.timestamp.date.formats": "dd.MM.yyyy,yyyy-MM-dd'T'HH:mm:ss,yyyy-MM-dd' 'HH:mm:ss",
     "csv.separator.char": "59",
     "csv.null.field.indicator": "EMPTY_SEPARATORS",
     "csv.first.row.as.header": "true",

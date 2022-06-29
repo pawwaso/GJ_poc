@@ -1,9 +1,0 @@
-{
-  "partner_id": "123456",
-  "partner_name": "Beispiel GmbH",
-  "adresse" : [
-          {"adresse_typ":"10","adresse_strasse":"Beispielstraße 11","adresse_plz":"21001","adresse_ort":"Frankfurt"},
-          {"adresse_typ":"20","adresse_strasse":"Examplestraße 7","adresse_plz":"41001","adresse_ort":"München"},
-          {"adresse_typ":"30","adresse_strasse":"Anderestraße 16","adresse_plz":"11001","adresse_ort":"Stadt (Fluß)"},
-  ]
-}
