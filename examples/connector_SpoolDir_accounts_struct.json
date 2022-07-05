@@ -1,0 +1,29 @@
+{
+  "name": "SpoolDir_accounts_struct",
+  "config": {
+    "connector.class": "com.github.jcustenborder.kafka.connect.spooldir.SpoolDirCsvSourceConnector",
+    "key.converter": "org.apache.kafka.connect.converters.LongConverter",
+    "value.converter": "io.confluent.connect.avro.AvroConverter",
+    "config.action.reload": "restart",
+    "errors.retry.timeout": "10000",
+    "errors.log.enable": "true",
+    "errors.log.include.messages": "true",
+    "topic": "account_state_topic",
+    "cleanup.policy": "DELETE",
+    "input.path": "/var/input-dir",
+    "error.path": "/var/input-dir",
+    "input.file.pattern": "^.*\\.csv$",
+    "file.minimum.age.ms": "1000",
+    "timestamp.mode": "FIELD",
+    "files.sort.attributes": "LastModifiedAsc",
+    "input.path.walk.recursively": "false",
+    "value.schema": "\"{\\\"name\\\":\\\"ce.gj.account.AccountState\\\", \\\"type\\\":\\\"STRUCT\\\",\\\"isOptional\\\":false, \\\"fieldSchemas\\\":{ \\\"partner_id\\\":{\\\"type\\\":\\\"INT64\\\",\\\"isOptional\\\":false}, \\\"iban\\\":{\\\"type\\\":\\\"STRING\\\",\\\"isOptional\\\":false}, \\\"gueltig_ab\\\":{\\\"name\\\":\\\"org.apache.kafka.connect.data.Timestamp\\\",\\\"type\\\":\\\"INT64\\\",\\\"version\\\":1,\\\"isOptional\\\":false}, \\\"kontostand\\\":{\\\"name\\\":\\\"org.apache.kafka.connect.data.Decimal\\\",\\\"type\\\":\\\"BYTES\\\",\\\"version\\\":1,\\\"parameters\\\":{\\\"scale\\\":\\\"2\\\"},\\\"isOptional\\\":false}}}\"",
+    "schema.generation.enabled": "true",
+    "schema.generation.key.fields": "",
+    "schema.generation.key.name": "",
+    "schema.generation.value.name": "kafka.connect.account.model.Value",
+    "parser.timestamp.date.formats": "dd.MM.yyyy",
+    "timestamp.field": "gueltig_ab",
+    "csv.first.row.as.header": "true"
+  }
+}

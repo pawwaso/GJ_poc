@@ -1,0 +1,10 @@
+{
+  "schemaType": "AVRO",
+  "schema":
+  "
+  {
+    \"type\": \"string\",
+    \"name\": \"partner_id\"
+  }
+  "
+}

@@ -1,0 +1,11 @@
+{
+  "name": "de.gj.AccountKey",
+  "type": "STRUCT",
+  "isOptional": false,
+  "fieldSchemas": {
+    "id": {
+      "type": "INT64",
+      "isOptional": false
+    }
+  }
+}

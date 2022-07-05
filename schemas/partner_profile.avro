@@ -1,0 +1,54 @@
+{
+  "schemaType": "AVRO",
+  "schema":
+  "
+  {
+    \"type\": \"record\",
+    \"namespace\": \"de.gj\",
+    \"name\": \"Partner\",
+    \"fields\": [
+      {
+        \"name\": \"partner_id\",
+        \"type\": \"string\"
+      },
+      {
+        \"name\": \"partner_name\",
+        \"type\": \"string\"
+      },
+      {
+        \"name\": \"adresse\",
+        \"type\": [
+          \"null\",
+          {
+            \"type\": \"array\",
+            \"items\": {
+              \"type\": \"record\",
+              \"name\": \"Adress\",
+              \"fields\": [
+                {
+                  \"name\": \"adresse_typ\",
+                  \"type\": \"string\"
+                },
+                {
+                  \"name\": \"adresse_strasse\",
+                  \"type\": \"string\"
+                },
+                {
+                  \"name\": \"adresse_plz\",
+                  \"type\": \"string\"
+                },
+                {
+                  \"name\": \"adresse_ort\",
+                  \"type\": \"string\"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+
+  "
+}
+

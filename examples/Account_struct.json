@@ -1,0 +1,30 @@
+{
+  "name": "ce.gj.account.AccountState",
+  "type": "STRUCT",
+  "isOptional": false,
+  "fieldSchemas": {
+    "partner_id": {
+      "type": "INT64",
+      "isOptional": false
+    },
+    "iban": {
+      "type": "STRING",
+      "isOptional": false
+    },
+    "gueltig_ab": {
+      "name": "org.apache.kafka.connect.data.Timestamp",
+      "type": "STRING",
+      "version": 1,
+      "isOptional": false
+    },
+    "kontostand": {
+      "name": "org.apache.kafka.connect.data.Decimal",
+      "type": "BYTES",
+      "version": 1,
+      "parameters": {
+        "scale": "2"
+      },
+      "isOptional": false
+    }
+  }
+}
