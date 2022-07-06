@@ -90,15 +90,15 @@ If successful, few containers shall run including (`connect`,`ksqldb`, `mssql`).
 27. `curl -X "POST" "http://<ADVERTISED_HOST>:8088/query"  -H "ACCEPT: application/vnd.ksql.v1+json"    -d $'{
     "ksql": "SELECT * FROM QUERYABLE_PARTNER_PROFILE WHERE PARTNER_ID=\'1234\' ;",
     "streamsProperties": {"ksql.streams.auto.offset.reset": "earliest"}}'`
-#### account stream with proper structure; regexp used for 'partner_id' extraction. This is due to the fact, that connector uses structured key, and tht in hindsight was not necessary, however it is instructive to see how scalar functions may be applied   
+#### account stream with proper structure; regexp used for 'partner_id' extraction. This is due to the fact, that connector uses structured key, and that in hindsight was not necessary, however it is instructive to see how scalar functions may be applied   
 28. `create stream account_states_stream as select REGEXP_EXTRACT('^(.*)=(.*)}$', partner_id,2) as PARTNER_ID, iban, parse_timestamp(gueltig_ab,'dd.MM.yyyy') as gueltig_ab, cast(kontostand as double) as kontostand from ACCOUNT_STATES_STREAM_KEYED partition by REGEXP_EXTRACT('^(.*)=(.*)}$', partner_id,2)  emit changes;`    
 #### table with account states partitioned by partner_id and Iban (no aggregation yet). This could be done differently and partitioning could be done only in respect too iban (As iban is unique and is related to exactly one partner_id)    
 29. `create table account_states_table with (key_format='AVRO') as select partner_id, iban, LATEST_BY_OFFSET(GUELTIG_AB) as gueltig_ab, LATEST_BY_OFFSET(kontostand) as kontostand from account_states_stream group by partner_id, iban emit changes;`
 #### produce some account data (via connector)    
 30. (outside of ksql and outside of container)
-    `cp ./konto-data/konten_1.csv ./kafka-connect-input-dir`
-    `cp ./konto-data/konten_2.csv ./kafka-connect-input-dir`
-    `cp ./konto-data/konten_3.csv ./kafka-connect-input-dir`
+   - `cp ./konto-data/konten_1.csv ./kafka-connect-input-dir`
+   - `cp ./konto-data/konten_2.csv ./kafka-connect-input-dir`
+   - `cp ./konto-data/konten_3.csv ./kafka-connect-input-dir`
 #### back in ksqldb    
 31.  `docker-compose exec ksqldb-server bash` |  `ksql http://ksqldb-server:8088`  
 #### this pull select returns latest values for partner_id
