@@ -29,7 +29,7 @@ After startup few conatiners shall be running. In case `schema-registry` and/or 
 
 ## Init state
 
-If successful, few containers shall run including (`conenct`,`ksqldb`, `mssql`). `mssql` is MS SQL Server with `GJ_TEST` DB created.
+If successful, few containers shall run including (`connect`,`ksqldb`, `mssql`). `mssql` is MS SQL Server with `GJ_TEST` DB created.
 
 
 ## Sequence
