@@ -1,22 +1,27 @@
 
 # Confluent based Kafka ecosystem
-For internal PoC.
+For an internal PoC.
 The goal of this PoC is to
 1. ingest data using SPOOL dir connector
 2. accept properly formatted messages from simulated producer
 3. apply ksqlDB stream processing
 4. sink topics into mssql
-5. provide platform for key based pull queries. Via REST exposed in ksqlDB.
+5. provide a platform for key based pull queries. Via REST exposed in ksqlDB.
 
-Project leverages newest version of confluent server. However, as broker side schema validation is supposed to be demonstrated within this PoC, and it requires `confluent-server`image (`ver 7.1.1`), this setup does not make use of KRaft, hence zookeeper is still deployed.
+Project leverages the newest version of confluent server. However, as broker side schema validation is supposed to be demonstrated within this PoC, and it requires `confluent-server` image (`ver 7.1.1`), this setup does not make use of KRaft, hence zookeeper is still deployed.
 
 # Documentation
 ## Content
 - [./configs/.localhost env prooperties](./configs/.localhost) contain ADVERTISED_HOST. Used in as docker-compose `env-file`  
-- [create DB script](./db/scripts/createDB.sql) creates MSQL DB at startup. Called in docker-compose
+- [create DB script](./db/scripts/createDB.sql) creates MSQL DB at startup. Called in docker-compose. Creates `GJ_test` DB.
 - [docker-compose.yaml](./docker-compose.yaml) starts all contaiiners (zoookeeper, broker, connect, ksqldb, coontrol-center, mssql)
 - [kafka-connect](./kafka-connect) contains additional connectors to be deployed at startup [spoolDir Source connector](./kafka-connect/jcustenborder-kafka-connect-spooldir-2.0.64) and [jdbc Sink connector](./kafka-connect/confluentinc-kafka-connect-jdbc-10.5.0)
+- [kafka-connect-connectors](./kafka-connect-connectors) has two connector definitions (source, sink) to be deployed via CC or curl  
 - [kafka-connect-input-dir](./kafka-connect-input-dir) is volume mapped to internal input folder
+- [koonto-data](./konto-data) set of input files to be read by source connector, they are referenced later in description
+- [examples](./examples) contains few AVRO definitions and STRUCT model for account value
+- [ksqldb](./ksqldb) contains DML definitions and queries used throughout this Poc
+- [schemas](./schemas) contains avro schemas to be registered iin Schema Registry
 
 
 # Run instructions
@@ -122,5 +127,30 @@ If successful, few containers shall run including (`connect`,`ksqldb`, `mssql`).
     "sql": "select * from partner where a_partner_id=\'${partnerId}\';",
     "streamsProperties": {},
     "sessionVariables":{"partnerId":"1234"}}' | jq`
-### this is the end of pipeline definition within kafka. Next steps focus on sink connector. Visit CC on 'http://<ADVERTISED_HOST>:9021 #-> ksqlDB #-> Flow' to see the pipeline visualized 
- 
+### this is the end of pipeline definition within kafka. Next steps focus on sink connector. Visit CC on 'http://<ADVERTISED_HOST>:9021 #-> ksqlDB #-> Flow' to see the pipeline visualized
+#### first we need to flatten original table `PARTNER`. right now it contains ARRAYs and ARRAYs of Structs. Arrays are not directly convertible to any msSQL type and  the respective columns would need to be skipped (blacklisted). For non-trivial topic structures (e.g., nested ARRAYs) there are few approaches available when sinking the content to DB
+- [jdbc connector with flatten feature](https://www.confluent.io/hub/norsktipping/kafka-connect-jdbc_flatten)
+- use SMTs flatten transformation [org.apache.kafka.connect.transforms.Flatten$Value]() useful for simpler cases or
+- flatten the topic with ksdqldb (create another table/stream using functions)
+and this is what is done below. `PARTNER_FLATTENED` contains coma-separated list of IBAN numbers (VARCHAR)
+41. `create or replace table PARTNER_FLATTENED as select A_PARTNER_ID as PARTNER_ID, A_KSQL_COL_0 as ACCOUNT_SUM, ARRAY_JOIN(A_IBANS) as IBANS, B_PARTNER_NAME as PARTNER_NAME FROM PARTNER emit changes;` 
+#### check the table (and underlying topic) structure; both key and value are AVROs
+42. `describe PARTNER_FLATTENED extended;`
+#### create sink connector: it creates/evolves tables when needed; upsert mode is translated to msSQLs 'merge', PRIMARY KEY column is provided; dead-letter-queue topic is defined; GJ_test DB is used
+43. `curl -d @kafka-connect-connectors/connector_jdbc_to_mssql_sink.json -X  POST -H "Content-Type: application/json" -H "Accept: application/json" http://<ADVERTISED_HOST>:8083/connectors`
+#### check DB state    
+44. `docker-compose exec mssql bash`
+#### log into DB    
+45. `/opt/mssql-tools/bin/sqlcmd  -S localhost -U SA -P My_password123`
+#### list DB contexts and make sure GJ_test exists
+46. `select name from sys.databases
+    go`
+#### switch context    
+47. `use GJ_TEST
+    go`
+#### list available tables, make sure PARTNER_FLATTENED table exist    
+48. `select table_name from information_schema.tables
+    go`    
+#### check content; confirm records exist
+49. `select * from PARTNER_FLATTENED
+    go`
