@@ -6,9 +6,9 @@ The goal of this PoC is to
 2. accept properly formatted messages from simulated producer
 3. apply ksqlDB stream processing
 4. sink topics into mssql
-5. provide platfrom for key based pull queries. Via REST exposed in ksqlDB.
+5. provide platform for key based pull queries. Via REST exposed in ksqlDB.
 
-Project leverages newest version of confluent server. However, as broker side schema validation is supposed to be demostrated within this PoC, and it requires `confluent-server`image (`ver 7.1.1`), this setup does not make use of KRaft, hence zookeeper is stil deployed.
+Project leverages newest version of confluent server. However, as broker side schema validation is supposed to be demonstrated within this PoC, and it requires `confluent-server`image (`ver 7.1.1`), this setup does not make use of KRaft, hence zookeeper is still deployed.
 
 # Documentation
 ## Content
@@ -44,7 +44,7 @@ If successful, few containers shall run including (`connect`,`ksqldb`, `mssql`).
 #### setting offset to earliest forces queries to process all messages   
 6. `SET 'auto.offset.reset' = 'earliest';`
 #### stream abstraction over existing topic, no query yet   
-7. `create stream account_states_stream_keyed(PARTNER_ID VARCHAR KEY, IBAN VARCHAR,GUELTIG_AB VARCHAR, KONTOSTAND VARCHAR) with(kafka_topic='account_state_topic_schema', value_format='avro', 'key_format'='avro');`
+7. `create stream account_states_stream_keyed(PARTNER_ID VARCHAR KEY, IBAN VARCHAR,GUELTIG_AB VARCHAR, KONTOSTAND VARCHAR) with(kafka_topic='account_state_topic_schema', value_format='avro');`
 #### CSAS syntax- new stream and new query that runs in the background; it is  ot the most optimal approach to structure konto data, however it highlights the way 
 #### ksql manages to take care of topics specifics- in this case repartitioning is done based on regexp
 8. `create stream account_states_stream as select REGEXP_EXTRACT('^(.*)=(.*)}$', partner_id,2) as PARTNER_ID, iban, parse_timestamp(gueltig_ab,'dd.MM.yyyy') as gueltig_ab, cast(kontostand as double) as kontostand from ACCOUNT_STATES_STREAM_KEYED partition by REGEXP_EXTRACT('^(.*)=(.*)}$', partner_id,2)  emit changes;`
