@@ -143,14 +143,14 @@ and this is what is done below. `PARTNER_FLATTENED` contains coma-separated list
 #### log into DB    
 45. `/opt/mssql-tools/bin/sqlcmd  -S localhost -U SA -P My_password123`
 #### list DB contexts and make sure GJ_test exists
-46. `select name from sys.databases
-    go`
+46. `select name from sys.databases`  
+    `go`
 #### switch context    
-47. `use GJ_TEST
-    go`
+47. `use GJ_TEST`  
+    `go`
 #### list available tables, make sure PARTNER_FLATTENED table exist    
-48. `select table_name from information_schema.tables
-    go`    
+48. `select table_name from information_schema.tables`  
+    `go`    
 #### check content; confirm records exist
-49. `select * from PARTNER_FLATTENED
-    go`
+49. `select * from PARTNER_FLATTENED`  
+    `go`
